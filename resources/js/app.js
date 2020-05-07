@@ -1,5 +1,6 @@
-const request = require('request')
-const cheerio = require('cheerio')
+import request from 'request'
+import cheerio from 'cheerio'
+import Database from './database/mysql.js'
 
 request('https://cors-anywhere.herokuapp.com/https://finance.naver.com/item/main.nhn?code=005930',
     function (error, response, body) {
@@ -14,6 +15,8 @@ request('https://cors-anywhere.herokuapp.com/https://finance.naver.com/item/main
         console.log($('.no_today').find('.blind').text())
 
 })
+
+Database.connectDb()
 
 
 

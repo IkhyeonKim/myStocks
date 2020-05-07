@@ -20,7 +20,7 @@ module.exports = [
             net: 'empty',
             tls: 'empty',
         },
-        entry: './resources/database/mysql.js',
+        entry: './resources/js/app.js',
         output: {
             filename: 'main.js',
             path: path.resolve(__dirname, 'dist')
