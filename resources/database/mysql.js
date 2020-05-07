@@ -13,7 +13,6 @@ import * as config from './config.json'
 //     console.log('Server started on port 3000')
 // })
 
-
 export default new (class Stocks {
     constructor() {
         this.connection = mysql.createConnection({
@@ -22,6 +21,8 @@ export default new (class Stocks {
             database: config.database,
             password: config.password
         })
+        
+        this.connection.connect()
 
         console.log('Stock!')
     }
@@ -30,14 +31,10 @@ export default new (class Stocks {
         this.connection.end()
     }
 
-    connectDb() {
-        this.connection.connect((err) => {
-            if (err) {
-                console.log('error: ', err.stack)
-                return
-            }
-
-            console.log('connected as id ' + connection.threadId);
+    selectDb() {
+        this.connection.query('SELECT * FROM tasks', function(error, results, fields){
+            if(error) throw error;
+            console.log('The solution is: ', results[0].solution)
         })
     }
 
