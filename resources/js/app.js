@@ -1,23 +1,23 @@
-import request from 'request'
-import cheerio from 'cheerio'
-import Database from '../database/mysql'
+const cheerio = require('cheerio');
+const axios = require('axios');
 
-request('https://cors-anywhere.herokuapp.com/https://finance.naver.com/item/main.nhn?code=005930',
-    function (error, response, body) {
-        if (error && response.statusCode !== 200) {
-            console.log('error: ', error)
-            console.log('statusCode: ', response && response.statusCode)
-        }
+// import config from './config.json';
+// import Database from '../database/mysql.js';
+// const database = require('../database/mysql');
 
+axios.get('https://cors-anywhere.herokuapp.com/https://finance.naver.com/item/main.nhn?code=005930')
+    .then(function (response) {
+        // console.log(response.data)
+        const parsedHtml = cheerio.load(response.data)
+        // console.log(parsedHtml)
+        console.log(parsedHtml('.no_today').find('.blind').text());
+    })
+    .catch(function (err) {
+        console.log(err)
+    })
 
-        const $ = cheerio.load(body)
-
-        console.log($('.no_today').find('.blind').text())
-
-})
-
-Database.selectDb()
-Database.end()
+// Database.selectDb()
+// Database.end()
 
 // const connection = mysql.createConnection({
 //     host: config.host,

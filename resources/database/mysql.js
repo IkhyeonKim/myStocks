@@ -1,15 +1,16 @@
-import mysql from 'mysql'
-import * as config from './config.json'
+const mysql = require('mysql');
+const config = require('./config.json');
 
 // const express = require('express')
 
 // const app = express();
+// const port = 8000;
 
 // app.get('/', function (req, res) {
-//   res.send('hello world')
+//   res.sendFile(__dirname + './public/index.html')
 // })
 
-// app.listen('3000', () => {
+// app.listen(port, () => {
 //     console.log('Server started on port 3000')
 // })
 
