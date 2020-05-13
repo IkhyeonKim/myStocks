@@ -6,7 +6,15 @@ axios.get('https://cors-anywhere.herokuapp.com/https://finance.naver.com/item/ma
         // console.log(response.data)
         const parsedHtml = cheerio.load(response.data)
         // console.log(parsedHtml)
-        console.log(parsedHtml('.no_today').find('.blind').text());
+        const dateReg = new RegExp('[0-9]{4}\.[0-9]{2}\.[0-9]{2}')
+        const dotReg = new RegExp('\\.', 'g');
+
+        const stock = parsedHtml('.no_today').find('.blind').text();
+        
+        const parsedDate = dateReg.exec(parsedHtml('#time').find('.date').text());
+        const date = parsedDate[0].replace(dotReg, '-')
+
+        console.log(stock, date)
     })
     .catch(function (err) {
         console.log(err)
