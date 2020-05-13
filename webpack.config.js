@@ -1,30 +1,16 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require("path")
+const webpack = require('webpack')
+const HtmlWebPackPlugin = require('html-webpack-plugin')
 
 module.exports = [
     {
-        name: 'server',
-        target: 'node',
-        entry: './resources/database/mysql.js',
+        entry: './src/index.js',
         output: {
-            filename: 'serverMain.js',
-            path: path.resolve(__dirname, 'dist')
-        }
-
-    },
-
-    {
-        name: 'client',
-        node: {
-            fs: 'empty',
-            net: 'empty',
-            tls: 'empty',
+            filename: '[name].js',
+            path: path.resolve(__dirname, 'dist'),
+            publicPath: '/',
         },
-        entry: './resources/js/app.js',
-        output: {
-            filename: 'main.js',
-            path: path.resolve(__dirname, 'dist')
-        },
+        target: 'web',
         module: {
             rules: [
                 {
@@ -36,14 +22,24 @@ module.exports = [
                           presets: ['@babel/preset-env']
                         }
                     }
-                }
+                },
+                {
+                    test: /\.html$/,
+                    use: [
+                      {
+                        loader: "html-loader",
+                        options: { minimize: true }
+                      }
+                    ]
+                  },
             ]
         },
         plugins: [
-            new HtmlWebpackPlugin({
-                template: './resources/index.html',
-                filename: './index.html'
-            })
+            new HtmlWebPackPlugin({
+                template: "./src/index.html",
+                filename: "./index.html",
+                excludeChunks: [ 'server' ]
+              })
         ]
     }
 ]

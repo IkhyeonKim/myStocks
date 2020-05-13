@@ -5,8 +5,8 @@
   "type": "module",
   "main": "/resources/js/app.js",
   "scripts": {
-    "build": "webpack",
-    "dev-server": "webpack-dev-server"
+    "build": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --mode development",
+    "start": "node ./dist/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +26,7 @@
     "babel-loader": "^8.1.0",
     "html-loader": "^1.1.0",
     "html-webpack-plugin": "^4.3.0",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "webpack-node-externals": "^1.7.2"
   }
 }
