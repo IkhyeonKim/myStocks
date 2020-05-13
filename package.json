@@ -2,8 +2,7 @@
   "name": "stocks",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
-  "main": "/resources/js/app.js",
+  "main": "index.js",
   "scripts": {
     "build": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --mode development",
     "start": "node ./dist/server.js"
