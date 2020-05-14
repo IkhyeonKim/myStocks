@@ -4,6 +4,8 @@ import axios from 'axios';
 const dateReg = new RegExp('[0-9]{4}\.[0-9]{2}\.[0-9]{2}')
 const dotReg = new RegExp('\\.', 'g');
 
+const stockPoint = document.querySelector('#myStock');
+
 let stock;
 let date;
 
@@ -15,7 +17,9 @@ axios.get('https://cors-anywhere.herokuapp.com/https://finance.naver.com/item/ma
 
 
         stock = parsedHtml('.no_today').find('.blind').text();
-        
+
+        stockPoint.innerHTML = stock;
+
         const parsedDate = dateReg.exec(parsedHtml('#time').find('.date').text());
         date = parsedDate[0].replace(dotReg, '-')
 
@@ -25,8 +29,9 @@ axios.get('https://cors-anywhere.herokuapp.com/https://finance.naver.com/item/ma
         console.log(err)
 })
 
+
 axios.get('/stocks').then( res => {
-    console.log(res)
+    console.log(res.data)
 }).catch( err => {
     console.log(err)
 })
