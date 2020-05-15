@@ -25,6 +25,27 @@ export const insert = async (date, stock, _stockCode, _stockName) => {
     })
 }
 
+export const select = async (date, ...params) => {
+
+    return new Promise( (resolve, rejects) => {
+        Connection.query(`SELECT * FROM myStocks WHERE date='${date}'`, (err, results) => {
+            if(err) return rejects(err)
+
+            resolve(results)
+        })
+    })
+}
+
+export const update = async (date, stock) => {
+    return new Promise( (resolve, rejects) => {
+        Connection.query(`UPDATE myStocks SET stock_price=${stock} WHERE date='${date}'`, (err, results) => {
+            if(err) return rejects(err)
+
+            resolve(results)
+        })
+    })
+}
+
 export default {
-    all, insert
+    all, insert, select, update
 }

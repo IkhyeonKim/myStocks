@@ -3,6 +3,7 @@ import express from 'express'
 import DB from './db'
 import axios from 'axios'
 import cheerio from 'cheerio'
+import { isArray } from 'util'
 
 const app = express();
 const DIST_DIR = __dirname;
@@ -24,6 +25,7 @@ app.get('/parsing', async (req, res) => {
 
     let stock;
     let date;
+    let stockFromDb;
 
     await axios.get(parsingURL).then( response => {
         const parsedHtml = cheerio.load(response.data)
@@ -31,21 +33,45 @@ app.get('/parsing', async (req, res) => {
         
         date = parsedDate[0].replace(dotReg, '-')
         stock = parsedHtml('.no_today').find('.blind').text();
-        stock = stock.replace(',', '');
+        stock = parseInt(stock.replace(',', ''));
 
     }).catch( err => {
         console.log(err)
     })
 
     try{
-        let message = await DB.Stocks.insert(date, stock);
-        res.send(message)
-    }catch(e){
-        console.log(e);
-        res.sendStatus(500);
+        stockFromDb = await DB.Stocks.select(date);
+    }catch(e) {
+        console.log(e)
+        res.sendStatus(500)
     }
 
-    // res.send(date)
+    if(stockFromDb.length === 0){
+
+        try{
+            let message = await DB.Stocks.insert(date, stock);
+            res.send(message)
+        }catch(e){
+            console.log(e);
+            res.sendStatus(500);
+        }
+
+    }else{
+
+        if(stockFromDb[0].stock_price === stock){
+            res.send('It is already stored.')
+        }else {
+
+            try {
+                let message = await DB.Stocks.update(date, stock)
+                res.send(message)
+            } catch (error) {
+                res.sendStatus(500);
+            }    
+
+        }
+    }
+
 })
 
 app.get('/stocks', async (req, res) => {
