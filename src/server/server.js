@@ -8,6 +8,8 @@ const app = express();
 const DIST_DIR = __dirname;
 const HTML_FILE = path.join(DIST_DIR, 'index.html');
 
+const PORT = process.env.PORT || 8000
+
 app.use(express.static(DIST_DIR))
 
 app.get('/', async (req, res) => {
@@ -16,15 +18,34 @@ app.get('/', async (req, res) => {
 
 app.get('/parsing', async (req, res) => {
     const parsingURL = 'https://finance.naver.com/item/main.nhn?code=005930';
+
+    const dateReg = new RegExp('[0-9]{4}\.[0-9]{2}\.[0-9]{2}')
+    const dotReg = new RegExp('\\.', 'g');
+
     let stock;
+    let date;
+
     await axios.get(parsingURL).then( response => {
         const parsedHtml = cheerio.load(response.data)
+        const parsedDate = dateReg.exec(parsedHtml('#time').find('.date').text());
+        
+        date = parsedDate[0].replace(dotReg, '-')
         stock = parsedHtml('.no_today').find('.blind').text();
+        stock = stock.replace(',', '');
+
     }).catch( err => {
         console.log(err)
     })
 
-    res.send(stock)
+    try{
+        let message = await DB.Stocks.insert(date, stock);
+        res.send(message)
+    }catch(e){
+        console.log(e);
+        res.sendStatus(500);
+    }
+
+    // res.send(date)
 })
 
 app.get('/stocks', async (req, res) => {
@@ -36,7 +57,7 @@ app.get('/stocks', async (req, res) => {
         res.sendStatus(500);
     }
 })
-const PORT = process.env.PORT || 8000
+
 
 app.listen(PORT, () => {
     console.log(`App listening to ${PORT}....`)
