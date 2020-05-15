@@ -9,6 +9,11 @@ const app = express();
 const DIST_DIR = __dirname;
 const HTML_FILE = path.join(DIST_DIR, 'index.html');
 
+const parsingURL = 'https://finance.naver.com/item/main.nhn?code=005930';
+
+const dateReg = new RegExp('[0-9]{4}\.[0-9]{2}\.[0-9]{2}')
+const dotReg = new RegExp('\\.', 'g');
+
 const PORT = process.env.PORT || 8000
 
 app.use(express.static(DIST_DIR))
@@ -18,10 +23,6 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/parsing', async (req, res) => {
-    const parsingURL = 'https://finance.naver.com/item/main.nhn?code=005930';
-
-    const dateReg = new RegExp('[0-9]{4}\.[0-9]{2}\.[0-9]{2}')
-    const dotReg = new RegExp('\\.', 'g');
 
     let stock;
     let date;
@@ -59,15 +60,74 @@ app.get('/parsing', async (req, res) => {
     }else{
 
         if(stockFromDb[0].stock_price === stock){
-            res.send('It is already stored.')
+            res.send({
+                message: 'It is already stored.',
+                stock: stock,
+            })
         }else {
 
             try {
                 let message = await DB.Stocks.update(date, stock)
-                res.send(message)
+                res.send(stock)
             } catch (error) {
                 res.sendStatus(500);
             }    
+
+        }
+    }
+
+})
+
+app.get('/today-stock', async (req, res) => {
+
+    let stock;
+    let date;
+
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); 
+    let yyyy = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+    
+    try {
+        stock = await DB.Stocks.select(today)
+        console.log(stock)
+        res.send({
+            stock: stock[0].stock_price
+        })
+    }catch(e) {
+        console.log(e)
+        res.sendStatus(500)
+    }
+
+    if(stock.length !== 0){
+        console.log('------',stock[0].stock_price)
+        res.send(stock[0].stock_price)
+
+    }else {
+
+        await axios.get(parsingURL).then( response => {
+            const parsedHtml = cheerio.load(response.data)
+            const parsedDate = dateReg.exec(parsedHtml('#time').find('.date').text());
+            
+            date = parsedDate[0].replace(dotReg, '-')
+            stock = parsedHtml('.no_today').find('.blind').text();
+            stock = parseInt(stock.replace(',', ''));
+    
+        }).catch( err => {
+            console.log(err)
+        })
+    
+        try{
+
+            await DB.Stocks.insert(date, stock);
+            res.send(stock)
+
+        }catch(e){
+
+            console.log(e);
+            res.sendStatus(500);
 
         }
     }

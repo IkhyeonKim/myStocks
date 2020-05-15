@@ -4,10 +4,9 @@ import axios from 'axios';
 const stockPoint = document.querySelector('#myStock');
 
 let stock;
-let date;
 
-axios.get('/parsing').then( (response) => {
-        stock = response.data;
+axios.get('/today-stock').then( (response) => {
+        stock = response.data.stock;
         stockPoint.innerHTML = stock;
     })
     .catch((err) => {
