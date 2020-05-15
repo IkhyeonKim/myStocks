@@ -9,23 +9,17 @@ const stockPoint = document.querySelector('#myStock');
 let stock;
 let date;
 
-axios.get('https://cors-anywhere.herokuapp.com/https://finance.naver.com/item/main.nhn?code=005930')
-    .then(function (response) {
-        // console.log(response.data)
-        const parsedHtml = cheerio.load(response.data)
-        // console.log(parsedHtml)
+axios.get('/parsing').then( (response) => {
 
-
-        stock = parsedHtml('.no_today').find('.blind').text();
-
+        stock = response.data;
         stockPoint.innerHTML = stock;
 
-        const parsedDate = dateReg.exec(parsedHtml('#time').find('.date').text());
-        date = parsedDate[0].replace(dotReg, '-')
+        // const parsedDate = dateReg.exec(parsedHtml('#time').find('.date').text());
+        // date = parsedDate[0].replace(dotReg, '-')
 
-        console.log(stock, date)
+        // console.log(stock, date)
     })
-    .catch(function (err) {
+    .catch((err) => {
         console.log(err)
 })
 
