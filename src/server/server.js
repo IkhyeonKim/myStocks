@@ -3,7 +3,7 @@ import express from 'express'
 import DB from './db'
 import axios from 'axios'
 import cheerio from 'cheerio'
-import { isArray } from 'util'
+import util from './util'
 
 const app = express();
 const DIST_DIR = __dirname;
@@ -84,15 +84,18 @@ app.get('/today-stock', async (req, res) => {
     let date;
 
     let today = new Date();
-    let dd = String(today.getDate()).padStart(2, '0');
+    let day = today.getDay()
+    let dd = today.getDate(); 
     let mm = String(today.getMonth() + 1).padStart(2, '0'); 
     let yyyy = today.getFullYear();
+
+    dd -= util.isWeekend(day);
+    dd = String(dd).padStart(2, '0');
 
     today = yyyy + '-' + mm + '-' + dd;
     
     try {
         stock = await DB.Stocks.select(today)
-        console.log(stock)
         res.send({
             stock: stock[0].stock_price
         })
@@ -102,11 +105,12 @@ app.get('/today-stock', async (req, res) => {
     }
 
     if(stock.length !== 0){
-        console.log('------',stock[0].stock_price)
+
         res.send(stock[0].stock_price)
 
     }else {
-
+        // Todo: 월요일 장 개시 이전에 대한 대응 필요
+        // Todo: 파싱하는 부분 함수로 처리
         await axios.get(parsingURL).then( response => {
             const parsedHtml = cheerio.load(response.data)
             const parsedDate = dateReg.exec(parsedHtml('#time').find('.date').text());
