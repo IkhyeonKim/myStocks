@@ -62,7 +62,6 @@ app.get('/parsing', async (req, res) => {
 app.get('/today-stock', async (req, res) => {
 
     let stock;
-    let date;
 
     let today = new Date();
     let day = today.getDay()
@@ -91,9 +90,7 @@ app.get('/today-stock', async (req, res) => {
 
     }else {
         // Todo: 월요일 장 개시 이전에 대한 대응 필요
-        // Todo: 파싱하는 부분 함수로 처리
         const todayStock = await parsing.parse('005930')
-        console.log(todayStock.date, todayStock.stock)
 
         try{
 
