@@ -22,8 +22,21 @@ window.onload = () => {
             data: {
                 labels: stockDate,
                 datasets: [{
-                    data: stockData
+                    data: stockData,
+                    'label': '삼성전자',
+                    borderColor: '#273896',
+                    borderWidth: 1,
+                    fill: false
                 }]
+            },
+            options: {
+                scale: {
+                    ticks: {
+                        max: 48800,
+                        min: 47800,
+                        stepSize: 200
+                    }
+                }
             }
         })
 
