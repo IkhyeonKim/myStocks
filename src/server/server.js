@@ -1,18 +1,12 @@
 import path from 'path'
 import express from 'express'
 import DB from './db'
-import axios from 'axios'
-import cheerio from 'cheerio'
 import util from './util'
+import parsing from './parsing'
 
 const app = express();
 const DIST_DIR = __dirname;
 const HTML_FILE = path.join(DIST_DIR, 'index.html');
-
-const parsingURL = 'https://finance.naver.com/item/main.nhn?code=005930';
-
-const dateReg = new RegExp('[0-9]{4}\.[0-9]{2}\.[0-9]{2}')
-const dotReg = new RegExp('\\.', 'g');
 
 const PORT = process.env.PORT || 8000
 
@@ -24,24 +18,11 @@ app.get('/', async (req, res) => {
 
 app.get('/parsing', async (req, res) => {
 
-    let stock;
-    let date;
     let stockFromDb;
-
-    await axios.get(parsingURL).then( response => {
-        const parsedHtml = cheerio.load(response.data)
-        const parsedDate = dateReg.exec(parsedHtml('#time').find('.date').text());
-        
-        date = parsedDate[0].replace(dotReg, '-')
-        stock = parsedHtml('.no_today').find('.blind').text();
-        stock = parseInt(stock.replace(',', ''));
-
-    }).catch( err => {
-        console.log(err)
-    })
+    const todayStock = await parsing.parse('005930')
 
     try{
-        stockFromDb = await DB.Stocks.select(date);
+        stockFromDb = await DB.Stocks.select(todayStock.date);
     }catch(e) {
         console.log(e)
         res.sendStatus(500)
@@ -50,7 +31,7 @@ app.get('/parsing', async (req, res) => {
     if(stockFromDb.length === 0){
 
         try{
-            let message = await DB.Stocks.insert(date, stock);
+            let message = await DB.Stocks.insert(todayStock.date, todayStock.stock);
             res.send(message)
         }catch(e){
             console.log(e);
@@ -59,16 +40,16 @@ app.get('/parsing', async (req, res) => {
 
     }else{
 
-        if(stockFromDb[0].stock_price === stock){
+        if(stockFromDb[0].stock_price === todayStock.stock){
             res.send({
                 message: 'It is already stored.',
-                stock: stock,
+                stock: todayStock.stock,
             })
         }else {
 
             try {
-                let message = await DB.Stocks.update(date, stock)
-                res.send(stock)
+                let message = await DB.Stocks.update(todayStock.date, todayStock.stock)
+                res.send(todayStock.stock)
             } catch (error) {
                 res.sendStatus(500);
             }    
@@ -111,21 +92,12 @@ app.get('/today-stock', async (req, res) => {
     }else {
         // Todo: 월요일 장 개시 이전에 대한 대응 필요
         // Todo: 파싱하는 부분 함수로 처리
-        await axios.get(parsingURL).then( response => {
-            const parsedHtml = cheerio.load(response.data)
-            const parsedDate = dateReg.exec(parsedHtml('#time').find('.date').text());
-            
-            date = parsedDate[0].replace(dotReg, '-')
-            stock = parsedHtml('.no_today').find('.blind').text();
-            stock = parseInt(stock.replace(',', ''));
-    
-        }).catch( err => {
-            console.log(err)
-        })
-    
+        const todayStock = await parsing.parse('005930')
+        console.log(todayStock.date, todayStock.stock)
+
         try{
 
-            await DB.Stocks.insert(date, stock);
+            await DB.Stocks.insert(todayStock.date, todayStock.stock);
             res.send(stock)
 
         }catch(e){

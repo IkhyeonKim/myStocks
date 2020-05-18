@@ -8,6 +8,7 @@ export const isWeekend = (day) => {
     }
 }
 
+
 export default {
     isWeekend
 }
