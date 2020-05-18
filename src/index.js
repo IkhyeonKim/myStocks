@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Chart from 'chart.js'
+import './style/main.scss'
 
 const stockPoint = document.querySelector('#myStock');
 const stockDate = []
