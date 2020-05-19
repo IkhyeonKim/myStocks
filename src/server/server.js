@@ -75,34 +75,36 @@ app.get('/today-stock', async (req, res) => {
     today = yyyy + '-' + mm + '-' + dd;
     
     try {
+
         stock = await DB.Stocks.select(today)
-        res.send({
-            stock: stock[0].stock_price
-        })
+        
+        if(stock.length !== 0){
+
+            res.send({
+                stock: stock[0].stock_price
+            })
+    
+        }else {
+            // Todo: 월요일 장 개시 이전에 대한 대응 필요
+            const todayStock = await parsing.parse('005930')
+    
+            try{
+    
+                await DB.Stocks.insert(todayStock.date, todayStock.stock);
+                res.send({
+                    stock: todayStock.stock
+                })
+    
+            }catch(e){
+                console.log(e);
+                res.sendStatus(500);
+            }
+        }
+
+
     }catch(e) {
         console.log(e)
         res.sendStatus(500)
-    }
-
-    if(stock.length !== 0){
-
-        res.send(stock[0].stock_price)
-
-    }else {
-        // Todo: 월요일 장 개시 이전에 대한 대응 필요
-        const todayStock = await parsing.parse('005930')
-
-        try{
-
-            await DB.Stocks.insert(todayStock.date, todayStock.stock);
-            res.send(stock)
-
-        }catch(e){
-
-            console.log(e);
-            res.sendStatus(500);
-
-        }
     }
 
 })

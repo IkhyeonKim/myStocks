@@ -29,15 +29,15 @@ window.onload = () => {
                     fill: false
                 }]
             },
-            options: {
-                scale: {
-                    ticks: {
-                        max: 48800,
-                        min: 47800,
-                        stepSize: 200
-                    }
-                }
-            }
+            // options: {
+            //     scale: {
+            //         ticks: {
+            //             max: 48800,
+            //             min: 47800,
+            //             stepSize: 200
+            //         }
+            //     }
+            // }
         })
 
     }).catch( err => {
