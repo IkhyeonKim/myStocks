@@ -50,7 +50,7 @@ let stock;
 
 axios.get('/today-stock').then( (response) => {
         stock = response.data.stock;
-        stockPoint.innerHTML = stock;
+        stockPoint.innerHTML = stock + '원';
     })
     .catch((err) => {
         console.log(err)

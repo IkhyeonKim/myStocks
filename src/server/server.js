@@ -3,6 +3,7 @@ import express from 'express'
 import DB from './db'
 import util from './util'
 import parsing from './parsing'
+import cron from 'node-cron'
 
 const app = express();
 const DIST_DIR = __dirname;
@@ -119,7 +120,20 @@ app.get('/stocks', async (req, res) => {
     }
 })
 
+cron.schedule('30 15 * * 1-5', async () => {
+    const todayStock = await parsing.parse('005930')
+
+    try {
+        let message = await DB.Stocks.insert(todayStock.date, todayStock.stock);
+        console.log(message)
+    } catch (error) {
+        console.log(error)
+    }
+
+})
 
 app.listen(PORT, () => {
     console.log(`App listening to ${PORT}....`)
 })
+
+
