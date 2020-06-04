@@ -4,6 +4,13 @@
     box-sizing: border-box;
 }
 
+.wrapper {
+    display: grid;
+    justify-content: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
 .chart {
-    width: 500px;
+    width: 800px;
 }

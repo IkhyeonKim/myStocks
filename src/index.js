@@ -6,6 +6,31 @@ const stockPoint = document.querySelector('#myStock');
 const stockDate = []
 const stockData = []
 
+Number.prototype.formatComma = function(){
+    if(this==0) return 0;
+ 
+    let reg = /(^[+-]?\d+)(\d{3})/;
+    let n = (this + '');
+ 
+    while (reg.test(n)) {
+        n = n.replace(reg, '$1' + ',' + '$2')
+    }
+
+    return n;
+};
+ 
+String.prototype.formatComma = function(){
+    let num = parseFloat(this);
+    if( isNaN(num) ) return "0";
+ 
+    return num.formatComma();
+};
+
+String.prototype.formatDate = function() {
+    return this.slice(-5)
+}
+
+
 window.onload = () => {
     const chart = document.querySelector('#stock-chart');
 
@@ -29,20 +54,36 @@ window.onload = () => {
                     fill: false
                 }]
             },
-            // options: {
-            //     scale: {
-            //         ticks: {
-            //             max: 48800,
-            //             min: 47800,
-            //             stepSize: 200
-            //         }
-            //     }
-            // }
+            options: {
+                scales: {
+                    xAxes: [
+                        {
+                            ticks: {
+                                callback: function(label, index, labels){
+                                    return label.formatDate()
+                                }
+                            }
+                        }
+                    ],
+                    yAxes: [
+                        {
+                            ticks: {
+                                callback: function(label, index, labels){
+                                    return label.formatComma()+'원'
+                            }
+                        }}
+                    ]
+                }
+            }
         })
 
     }).catch( err => {
         console.log(err)
     })
+
+    while (condition) {
+        
+    }
 
 } 
 
@@ -50,7 +91,7 @@ let stock;
 
 axios.get('/today-stock').then( (response) => {
         stock = response.data.stock;
-        stockPoint.innerHTML = stock + '원';
+        stockPoint.innerHTML = stock.formatComma() + '원';
     })
     .catch((err) => {
         console.log(err)

@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible">
     <title>My stocks</title>
 </head>
+
 <body>
-    <h1>This is my stock chart</h1>
+    <div class="wrapper">
+        <h1>Today's stock</h1>
 
-    <section class="stock">
-        <h2 class="stock__header">Today's stock</h2>
-        <p class="stock__point" id="myStock">
-            Loading..
-        </p>
-    </section>
+        <section class="stock">
+            <p class="stock__point" id="myStock">
+                Loading..
+            </p>
+        </section>
 
-    <section class="chart">
-        <canvas id="stock-chart"></canvas>
-    </section>
+        <section class="chart">
+            <canvas id="stock-chart"></canvas>
+        </section>
+    </div>
+
 </body>
+
 </html>
