@@ -21,6 +21,7 @@ Number.prototype.formatComma = function(){
  
 String.prototype.formatComma = function(){
     let num = parseFloat(this);
+
     if( isNaN(num) ) return "0";
  
     return num.formatComma();
@@ -81,17 +82,17 @@ window.onload = () => {
         console.log(err)
     })
 
-    while (condition) {
-        
-    }
-
 } 
 
 let stock;
 
 axios.get('/today-stock').then( (response) => {
         stock = response.data.stock;
-        stockPoint.innerHTML = stock.formatComma() + '원';
+        if(isNaN(stock)){
+            stockPoint.innerHTML = stock;
+        }else{
+            stockPoint.innerHTML = stock.formatComma() + '원';
+        }
     })
     .catch((err) => {
         console.log(err)

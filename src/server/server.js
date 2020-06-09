@@ -69,6 +69,7 @@ app.get('/today-stock', async (req, res) => {
     let dd = today.getDate(); 
     let mm = String(today.getMonth() + 1).padStart(2, '0'); 
     let yyyy = today.getFullYear();
+    let hours = today.getHours();
 
     dd -= util.isWeekend(day);
     dd = String(dd).padStart(2, '0');
@@ -87,19 +88,23 @@ app.get('/today-stock', async (req, res) => {
     
         }else {
             // Todo: 월요일 장 개시 이전에 대한 대응 필요
-            const todayStock = await parsing.parse('005930')
+            // const todayStock = await parsing.parse('005930')
+            
+            res.send({
+                stock: '장 개시 이전'
+            })
+            
+            // try{
     
-            try{
+            //     await DB.Stocks.insert(todayStock.date, todayStock.stock);
+            //     res.send({
+            //         stock: todayStock.stock
+            //     })
     
-                await DB.Stocks.insert(todayStock.date, todayStock.stock);
-                res.send({
-                    stock: todayStock.stock
-                })
-    
-            }catch(e){
-                console.log(e);
-                res.sendStatus(500);
-            }
+            // }catch(e){
+            //     console.log(e);
+            //     res.sendStatus(500);
+            // }
         }
 
 
