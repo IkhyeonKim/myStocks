@@ -1,5 +1,5 @@
 import mysql from 'mysql'
-import * as config from './config.example.json'
+import * as config from './config.json'
 
 import Stocks from './stocks'
 

@@ -60,7 +60,7 @@ window.onload = () => {
                     xAxes: [
                         {
                             ticks: {
-                                callback: function(label, index, labels){
+                                callback: function(label){
                                     return label.formatDate()
                                 }
                             }
@@ -69,7 +69,7 @@ window.onload = () => {
                     yAxes: [
                         {
                             ticks: {
-                                callback: function(label, index, labels){
+                                callback: function(label){
                                     return label.formatComma()+'원'
                             }
                         }}

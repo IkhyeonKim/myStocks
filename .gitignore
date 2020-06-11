@@ -1,3 +1,3 @@
 /node_modules
-/src/server/db/config.example.json
+/src/server/db/config.json
 /dist/
